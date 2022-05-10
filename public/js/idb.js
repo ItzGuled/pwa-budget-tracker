@@ -3,7 +3,7 @@ const request = indexedDB.open("pwa-budget-tracker", 1);
 
 request.onupgradeneeded = function (event) {
   const db = event.target.result;
-  db.createObjectStore("new_budget", {
+  db.createObjectStore("new_transaction", {
     autoIncrement: true,
   });
 };
@@ -12,7 +12,7 @@ request.onsuccess = function (event) {
   db = event.target.result;
 
   if (navigator.onLine) {
-    uploadBudget();
+    uploadTransaction();
   }
 };
 
@@ -21,17 +21,17 @@ request.onerror = function (event) {
 };
 
 function saveRecord(record) {
-  const transaction = db.transaction(["new_budget"], "readwrite");
+  const transaction = db.transaction(["new_transaction"], "readwrite");
 
-  const transactionObjectStore = transaction.objectStore("new_budget");
+  const transactionObjectStore = transaction.objectStore("new_transaction");
 
   transactionObjectStore.add(record);
 }
 
-function uploadBudget() {
-  const transaction = db.transaction(["new_budget"], "readwrite");
+function uploadTransaction() {
+  const transaction = db.transaction(["new_transaction"], "readwrite");
 
-  const transactionObjectStore = transaction.objectStore("new_budget");
+  const transactionObjectStore = transaction.objectStore("new_transaction");
 
   const getAll = transactionObjectStore.getAll();
 
@@ -50,9 +50,9 @@ function uploadBudget() {
           if (serverResponse.message) {
             throw new Error(serverResponse);
           }
-          const transaction = db.transaction(["new_budget"], "readwrite");
+          const transaction = db.transaction(["new_transaction"], "readwrite");
           const transactionObjectStore =
-            transaction.objectStore("new_budget");
+            transaction.objectStore("new_transaction");
           transactionObjectStore.clear();
 
           alert("This has been submitted!");
@@ -64,4 +64,4 @@ function uploadBudget() {
   };
 }
 
-window.addEventListener("online", uploadBudget);
+window.addEventListener("online", uploadTransaction);
